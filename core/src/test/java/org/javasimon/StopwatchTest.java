@@ -105,7 +105,7 @@ public final class StopwatchTest extends SimonUnitTest {
 		Assert.assertEquals(sample.getCounter(), 1);
 		Assert.assertEquals(sample.getMax(), 10);
 		Assert.assertEquals(sample.getMin(), 10);
-		Assert.assertEquals(sample.getLast(), 10);
+		Assert.assertEquals(sample.getLastSplit(), 10);
 	}
 
 	private void assertZeroSample(StopwatchSample sample) {
@@ -133,7 +133,7 @@ public final class StopwatchTest extends SimonUnitTest {
 		Assert.assertEquals(sample.getActive(), stopwatch.getActive());
 		Assert.assertEquals(sample.getMaxActive(), stopwatch.getMaxActive());
 		Assert.assertEquals(sample.getMaxActiveTimestamp(), stopwatch.getMaxActiveTimestamp());
-		Assert.assertEquals(sample.getLast(), stopwatch.getLast());
+		Assert.assertEquals(sample.getLastSplit(), stopwatch.getLastSplit());
 		Assert.assertEquals(sample.getMean(), stopwatch.getMean());
 		Assert.assertEquals(sample.getStandardDeviation(), stopwatch.getStandardDeviation());
 		Assert.assertEquals(sample.getVariance(), stopwatch.getVariance());

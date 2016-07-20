@@ -51,7 +51,7 @@ import org.javasimon.Stopwatch;
  *       counter(-): Simon Counter: counter=0, max=undef, min=undef [com.my.counter DISABLED]</pre>
  * Notice +/- signs in parenthesis that displays effective Simon state (enabled/disabled), further
  * details are printed via each Simon's {@code toString} method.
- *
+ * <p>
  * <h3>Other utilities</h3>
  * It is possible to obtain "local name" of the Simon (behind the last dot) via {@link #localName(String)}
  * or check if the name is valid Simon name via {@link #checkName(String)}.

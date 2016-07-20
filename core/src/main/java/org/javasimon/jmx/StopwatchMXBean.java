@@ -22,7 +22,7 @@ public interface StopwatchMXBean extends SimonSuperMXBean {
 	 * Returns value of the last added split - whether it was added directly or with stop method.
 	 *
 	 * @return value of the last added split
-	 * @see org.javasimon.Stopwatch#getLast()
+	 * @see org.javasimon.Stopwatch#getLastSplit()
 	 */
 	long getLast();
 

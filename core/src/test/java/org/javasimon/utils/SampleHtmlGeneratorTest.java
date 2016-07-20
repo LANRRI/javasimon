@@ -70,7 +70,7 @@ public class SampleHtmlGeneratorTest extends SimonUnitTest {
 	}
 
 	private static Sample createStopwatchSample(int index) {
-		StopwatchSample sample = new StopwatchSample();
+		StopwatchSample sample = new StopwatchSample(common, total, counter, min, max, minTimestamp, maxTimestamp, active, maxActive, maxActiveTimestamp, lastSplit, mean, mean2);
 		sample.setName("sample" + index);
 		sample.setActive(index);
 		sample.setCounter(2 * index);

@@ -74,7 +74,11 @@ public final class Split implements HasAttributes, AutoCloseable {
 	 * @param stopwatch owning Stopwatch (disabled)
 	 * @param clock Clock for this Split
 	 */
-	Split(Stopwatch stopwatch, SimonClock clock) {
+	public static Split disabled(Stopwatch stopwatch, SimonClock clock) {
+		return new Split(stopwatch, clock);
+	}
+
+	private Split(Stopwatch stopwatch, SimonClock clock) {
 		assert !(stopwatch.isEnabled()) : "stopwatch must be disabled in this constructor!";
 		this.enabled = false;
 		this.stopwatch = stopwatch;
@@ -190,7 +194,7 @@ public final class Split implements HasAttributes, AutoCloseable {
 		long nowNanos = clock.nanoTime();
 		total = nowNanos - start; // we update total before calling the stop so that callbacks can use it
 		if (stopwatch != null) {
-			((StopwatchImpl) stopwatch).stop(this, start, nowNanos, subSimon);
+			((StopwatchImpl) stopwatch).stop(this, nowNanos, subSimon);
 		}
 		return this;
 	}

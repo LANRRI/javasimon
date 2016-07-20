@@ -1,8 +1,8 @@
 package org.javasimon;
 
-import org.javasimon.utils.SimonUtils;
-
 import java.util.Collection;
+
+import org.javasimon.utils.SimonUtils;
 
 /**
  * Class implements {@link org.javasimon.Stopwatch} interface - see there for how to use Stopwatch.
@@ -12,18 +12,7 @@ import java.util.Collection;
  */
 final class StopwatchImpl extends AbstractSimon implements Stopwatch {
 
-	private long total;
-	private long counter;
-	private long active;
-	private long max;
-	private long maxTimestamp;
-	private long maxActive;
-	private long maxActiveTimestamp;
-	private long min = Long.MAX_VALUE;
-	private long minTimestamp;
-	private long last;
-	private double mean; // used to calculate statistics
-	private double mean2; // used to calculate statistics
+	private StopwatchSample sample;
 
 	/**
 	 * Constructs Stopwatch Simon with a specified name and for the specified manager.
@@ -32,7 +21,8 @@ final class StopwatchImpl extends AbstractSimon implements Stopwatch {
 	 * @param manager owning manager
 	 */
 	StopwatchImpl(String name, Manager manager) {
-		super(name, manager);
+		super(manager);
+		new StopwatchSample(name);
 	}
 
 	@Override
@@ -80,12 +70,11 @@ final class StopwatchImpl extends AbstractSimon implements Stopwatch {
 	@Override
 	public Split start() {
 		if (!enabled) {
-			return new Split(this, manager);
+			return Split.disabled(this, manager);
 		}
 
 		synchronized (this) {
-			updateUsages(manager.milliTime());
-			activeStart();
+			sample = sample.activeStart(manager.milliTime());
 		}
 		Split split = new Split(this, manager, manager.nanoTime());
 		manager.callback().onStopwatchStart(split);
@@ -96,17 +85,16 @@ final class StopwatchImpl extends AbstractSimon implements Stopwatch {
 	 * Protected method doing the stop work based on provided start nano-time.
 	 *
 	 * @param split Split object that has been stopped
-	 * @param start start nano-time of the split @return split time in ns
 	 * @param nowNanos current nano time
 	 * @param subSimon name of the sub-stopwatch (hierarchy delimiter is added automatically), may be {@code null}
 	 */
-	void stop(final Split split, final long start, final long nowNanos, final String subSimon) {
+	void stop(final Split split, final long nowNanos, final String subSimon) {
 		StopwatchSample sample = null;
 		synchronized (this) {
 			active--;
 			updateUsagesNanos(nowNanos);
 			if (subSimon == null) {
-				long splitNs = nowNanos - start;
+				long splitNs = nowNanos - split.getStart();
 				addSplit(splitNs);
 				if (!manager.callback().callbacks().isEmpty()) {
 					sample = sample();
@@ -123,14 +111,6 @@ final class StopwatchImpl extends AbstractSimon implements Stopwatch {
 		manager.callback().onStopwatchStop(split, sample);
 	}
 	// Uses last usage, hence it must be placed after usages update
-
-	private void activeStart() {
-		active++;
-		if (active >= maxActive) {
-			maxActive = active;
-			maxActiveTimestamp = getLastUsage();
-		}
-	}
 
 	private long addSplit(long split) {
 		last = split;
@@ -154,104 +134,80 @@ final class StopwatchImpl extends AbstractSimon implements Stopwatch {
 
 	@Override
 	public synchronized double getMean() {
-		return mean;
+		return sample.getMean();
 	}
 
 	@Override
 	public synchronized double getVarianceN() {
-		if (counter == 0) {
-			return Double.NaN;
-		}
-		if (counter == 1) {
-			return 0d;
-		}
-		return mean2 / counter;
+		return sample.getVarianceN();
 	}
 
 	@Override
 	public synchronized double getVariance() {
-		if (counter == 0) {
-			return Double.NaN;
-		}
-		if (counter == 1) {
-			return 0d;
-		}
-		return mean2 / (counter - 1);
+		return sample.getVariance();
 	}
 
 	@Override
 	public synchronized double getStandardDeviation() {
-		return Math.sqrt(getVariance());
+		return sample.getStandardDeviation();
 	}
 
 	@Override
 	public synchronized long getTotal() {
-		return total;
+		return sample.getTotal();
 	}
 
 	@Override
-	public synchronized long getLast() {
-		return last;
+	public synchronized long getLastSplit() {
+		return sample.getLastSplit();
 	}
 
 	@Override
 	public synchronized long getCounter() {
-		return counter;
+		return sample.getCounter();
 	}
 
 	@Override
 	public synchronized long getMax() {
-		return max;
+		return sample.getMax();
 	}
 
 	@Override
 	public synchronized long getMin() {
-		return min;
+		return sample.getMin();
 	}
 
 	@Override
 	public synchronized long getMaxTimestamp() {
-		return maxTimestamp;
+		return sample.getMaxTimestamp();
 	}
 
 	@Override
 	public synchronized long getMinTimestamp() {
-		return minTimestamp;
+		return sample.getMinTimestamp();
 	}
 
 	@Override
 	public synchronized long getActive() {
-		return active;
+		return sample.getActive();
 	}
 
 	@Override
 	public synchronized long getMaxActive() {
-		return maxActive;
+		return sample.getMaxActive();
 	}
 
 	@Override
 	public synchronized long getMaxActiveTimestamp() {
-		return maxActiveTimestamp;
+		return sample.getMaxActiveTimestamp();
+	}
+
+	@Override public void setNote(String note) {
+		sample = sample.withNote(note);
 	}
 
 	@Override
 	public synchronized StopwatchSample sample() {
-		StopwatchSample sample = new StopwatchSample();
-		sample.setTotal(total);
-		sample.setCounter(counter);
-		sample.setMin(min);
-		sample.setMax(max);
-		sample.setMinTimestamp(minTimestamp);
-		sample.setMaxTimestamp(maxTimestamp);
-		sample.setActive(active);
-		sample.setMaxActive(maxActive);
-		sample.setMaxActiveTimestamp(maxActiveTimestamp);
-		sample.setMean(mean);
-		sample.setVariance(getVariance());
-		sample.setVarianceN(getVarianceN());
-		sample.setStandardDeviation(getStandardDeviation());
-		sample.setLast(last);
-		sampleCommon(sample);
 		return sample;
 	}
 
@@ -266,16 +222,6 @@ final class StopwatchImpl extends AbstractSimon implements Stopwatch {
 	}
 
 	/**
-	 * Updates usage statistics without using {@link System#currentTimeMillis()} if client code already has
-	 * current nano timer value.
-	 *
-	 * @param nowNanos current value of nano timer
-	 */
-	private void updateUsagesNanos(long nowNanos) {
-		updateUsages(manager.millisForNano(nowNanos));
-	}
-
-	/**
 	 * Returns Simon basic information, total time, counter, max value and min value as a human readable string.
 	 *
 	 * @return basic information, total time, counter, max and min values
@@ -283,11 +229,12 @@ final class StopwatchImpl extends AbstractSimon implements Stopwatch {
 	 */
 	@Override
 	public synchronized String toString() {
-		return "Simon Stopwatch: total " + SimonUtils.presentNanoTime(total) +
-			", counter " + counter +
-			", max " + SimonUtils.presentNanoTime(max) +
-			", min " + SimonUtils.presentNanoTime(min) +
-			", mean " + SimonUtils.presentNanoTime((long) mean) +
+		StopwatchSample currentSample = this.sample;
+		return "Simon Stopwatch: total " + SimonUtils.presentNanoTime(currentSample.getTotal()) +
+			", counter " + currentSample.getCounter() +
+			", max " + SimonUtils.presentNanoTime(currentSample.getMax()) +
+			", min " + SimonUtils.presentNanoTime(currentSample.getMin()) +
+			", mean " + SimonUtils.presentNanoTime(currentSample.getMean()) +
 			super.toString();
 	}
 }

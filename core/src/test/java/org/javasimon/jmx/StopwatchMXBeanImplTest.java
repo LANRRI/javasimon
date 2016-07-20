@@ -27,7 +27,7 @@ public class StopwatchMXBeanImplTest {
 	@Test
 	public void testSampleIncrement() {
 		String key = "key";
-		StopwatchSample sample = new StopwatchSample();
+		StopwatchSample sample = new StopwatchSample(common, total, counter, min, max, minTimestamp, maxTimestamp, active, maxActive, maxActiveTimestamp, lastSplit, mean, mean2);
 		sample.setCounter(1);
 		when(stopwatch.sampleIncrement(key)).thenReturn(sample);
 

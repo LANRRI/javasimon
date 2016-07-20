@@ -1,11 +1,11 @@
 package org.javasimon;
 
-import org.javasimon.clock.SimonClock;
-
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import org.javasimon.clock.SimonClock;
 
 /**
  * Null Simon implements Simon returned by the disabled {@link Manager#getSimon(String)}
@@ -197,7 +197,7 @@ final class NullStopwatch extends NullSimon implements Stopwatch {
 	 */
 	static final NullStopwatch INSTANCE = new NullStopwatch();
 
-	private static final Split NULL_SPLIT = new Split(INSTANCE, SimonClock.SYSTEM);
+	private static final Split NULL_SPLIT = Split.disabled(INSTANCE, SimonClock.SYSTEM);
 
 	private NullStopwatch() {
 	}
@@ -243,7 +243,7 @@ final class NullStopwatch extends NullSimon implements Stopwatch {
 	}
 
 	@Override
-	public long getLast() {
+	public long getLastSplit() {
 		return 0;
 	}
 

@@ -33,7 +33,7 @@ public class StopwatchAggregateTest extends SimonUnitTest {
 
 	@Test
 	public void testTotalIsIncremented() {
-		StopwatchSample sample = new StopwatchSample();
+		StopwatchSample sample = new StopwatchSample(common, total, counter, min, max, minTimestamp, maxTimestamp, active, maxActive, maxActiveTimestamp, lastSplit, mean, mean2);
 
 		sample.setTotal(5);
 		aggregate.addSample(sample);
@@ -46,7 +46,7 @@ public class StopwatchAggregateTest extends SimonUnitTest {
 
 	@Test
 	public void testCounterIsIncremented() {
-		StopwatchSample sample = new StopwatchSample();
+		StopwatchSample sample = new StopwatchSample(common, total, counter, min, max, minTimestamp, maxTimestamp, active, maxActive, maxActiveTimestamp, lastSplit, mean, mean2);
 
 		sample.setCounter(1);
 		aggregate.addSample(sample);
@@ -59,7 +59,7 @@ public class StopwatchAggregateTest extends SimonUnitTest {
 
 	@Test
 	public void testMinIsUpdated() {
-		StopwatchSample sample = new StopwatchSample();
+		StopwatchSample sample = new StopwatchSample(common, total, counter, min, max, minTimestamp, maxTimestamp, active, maxActive, maxActiveTimestamp, lastSplit, mean, mean2);
 
 		sample.setMin(40);
 		sample.setMinTimestamp(100);
@@ -82,7 +82,7 @@ public class StopwatchAggregateTest extends SimonUnitTest {
 
 	@Test
 	public void testMaxIsUpdated() {
-		StopwatchSample sample = new StopwatchSample();
+		StopwatchSample sample = new StopwatchSample(common, total, counter, min, max, minTimestamp, maxTimestamp, active, maxActive, maxActiveTimestamp, lastSplit, mean, mean2);
 
 		sample.setMax(10);
 		sample.setMaxTimestamp(100);
@@ -105,7 +105,7 @@ public class StopwatchAggregateTest extends SimonUnitTest {
 
 	@Test
 	public void testActiveIsUpdated() {
-		StopwatchSample sample = new StopwatchSample();
+		StopwatchSample sample = new StopwatchSample(common, total, counter, min, max, minTimestamp, maxTimestamp, active, maxActive, maxActiveTimestamp, lastSplit, mean, mean2);
 
 		sample.setActive(2);
 		aggregate.addSample(sample);
@@ -118,7 +118,7 @@ public class StopwatchAggregateTest extends SimonUnitTest {
 
 	@Test
 	public void testMaxActiveIsUpdated() {
-		StopwatchSample sample = new StopwatchSample();
+		StopwatchSample sample = new StopwatchSample(common, total, counter, min, max, minTimestamp, maxTimestamp, active, maxActive, maxActiveTimestamp, lastSplit, mean, mean2);
 
 		sample.setMaxActive(10);
 		sample.setMaxActiveTimestamp(100);
@@ -146,7 +146,7 @@ public class StopwatchAggregateTest extends SimonUnitTest {
 
 	@Test
 	public void testAggregatesWithSameChangesAreEqual() {
-		StopwatchSample sample = new StopwatchSample();
+		StopwatchSample sample = new StopwatchSample(common, total, counter, min, max, minTimestamp, maxTimestamp, active, maxActive, maxActiveTimestamp, lastSplit, mean, mean2);
 		sample.setTotal(1);
 		sample.setCounter(2);
 		sample.setMin(3);

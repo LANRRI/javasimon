@@ -21,35 +21,20 @@ abstract class AbstractSimon implements Simon {
 	/** Simon's effective state. */
 	protected volatile boolean enabled;
 
-	/** Timestamp of the first usage. */
-	protected long firstUsage;
-
-	/** Timestamp of the last usage. */
-	protected long lastUsage;
-
-	private final String name;
-
 	private SimonState state = SimonState.INHERIT;
 
 	private Simon parent;
 
 	private final List<Simon> children = new CopyOnWriteArrayList<>();
 
-	private String note;
-
 	private AttributesSupport attributesSupport = new AttributesSupport();
 
 	private Map<Object, Simon> incrementalSimons;
 
-	/**
-	 * Constructor of the abstract Simon is used internally by subclasses.
-	 *
-	 * @param name Simon's name
-	 * @param manager owning Manager
-	 */
-	AbstractSimon(String name, Manager manager) {
-		this.name = name;
+	/** Constructor of the abstract Simon is used internally by subclasses. */
+	AbstractSimon(Manager manager) {
 		this.manager = manager;
+		String name = sample().getName();
 		if (name == null || name.equals(Manager.ROOT_SIMON_NAME)) {
 			state = SimonState.ENABLED;
 			enabled = true;
@@ -88,7 +73,7 @@ abstract class AbstractSimon implements Simon {
 
 	@Override
 	public final String getName() {
-		return name;
+		return sample().getName();
 	}
 
 	public final Manager getManager() {
@@ -107,6 +92,7 @@ abstract class AbstractSimon implements Simon {
 	}
 
 	private boolean isAnonymousOrRootSimon() {
+		String name = sample().getName();
 		return (name == null || name.equals(Manager.ROOT_SIMON_NAME));
 	}
 
@@ -134,18 +120,6 @@ abstract class AbstractSimon implements Simon {
 		return enabled;
 	}
 
-	/**
-	 * Updates usage statistics.
-	 *
-	 * @param now current millis timestamp
-	 */
-	void updateUsages(long now) {
-		lastUsage = now;
-		if (firstUsage == 0) {
-			firstUsage = lastUsage;
-		}
-	}
-
 	@Override
 	public synchronized final SimonState getState() {
 		return state;
@@ -153,22 +127,17 @@ abstract class AbstractSimon implements Simon {
 
 	@Override
 	public String getNote() {
-		return note;
-	}
-
-	@Override
-	public void setNote(String note) {
-		this.note = note;
+		return sample().getNote();
 	}
 
 	@Override
 	public long getFirstUsage() {
-		return firstUsage;
+		return sample().getFirstUsage();
 	}
 
 	@Override
 	public long getLastUsage() {
-		return lastUsage;
+		return sample().getLastUsage();
 	}
 
 	/**
@@ -251,13 +220,6 @@ abstract class AbstractSimon implements Simon {
 		return attributesSupport.getCopyAsSortedMap();
 	}
 
-	void sampleCommon(Sample sample) {
-		sample.setName(name);
-		sample.setNote(note);
-		sample.setFirstUsage(firstUsage);
-		sample.setLastUsage(lastUsage);
-	}
-
 	// incremental Simons methods
 	Collection<Simon> incrementalSimons() {
 		return incrementalSimons != null ? incrementalSimons.values() : null;
@@ -322,7 +284,7 @@ abstract class AbstractSimon implements Simon {
 	 */
 	@Override
 	public synchronized String toString() {
-		return " [" + name + " " + state +
+		return " [" + getName() + " " + state +
 			(getNote() != null && getNote().length() != 0 ? " \"" + getNote() + "\"]" : "]");
 	}
 }

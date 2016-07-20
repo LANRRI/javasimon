@@ -8,6 +8,10 @@ package org.javasimon;
  */
 public class UnknownSample extends Sample {
 
+	public UnknownSample() {
+		super(name, note, firstUsage, lastUsage);
+	}
+
 	/**
 	 * Returns readable representation of the sample object.
 	 *

@@ -19,6 +19,10 @@ public class CounterSample extends Sample {
 	private long incrementSum;
 	private long decrementSum;
 
+	public CounterSample() {
+		super(name, note, firstUsage, lastUsage);
+	}
+
 	/**
 	 * Returns the value of the counter.
 	 *

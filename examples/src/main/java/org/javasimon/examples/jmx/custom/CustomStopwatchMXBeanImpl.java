@@ -44,7 +44,7 @@ public class CustomStopwatchMXBeanImpl extends StopwatchMXBeanImpl implements Cu
 
 	@Override
 	public long getLastInMillis() {
-		return nanosToMillis(stopwatch.getLast());
+		return nanosToMillis(stopwatch.getLastSplit());
 	}
 
 	@Override

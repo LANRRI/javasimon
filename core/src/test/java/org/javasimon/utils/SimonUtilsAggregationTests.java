@@ -60,7 +60,7 @@ public class SimonUtilsAggregationTests extends SimonUnitTest {
 	}
 
 	private void createStopwatchHierarchy() {
-		StopwatchSample sample = new StopwatchSample();
+		StopwatchSample sample = new StopwatchSample(common, total, counter, min, max, minTimestamp, maxTimestamp, active, maxActive, maxActiveTimestamp, lastSplit, mean, mean2);
 		sample.setTotal(1);
 
 		stopwatchHeirarchy = createMockStopwatch("root", sample);
@@ -101,7 +101,7 @@ public class SimonUtilsAggregationTests extends SimonUnitTest {
 		Counter child2 = createMockCounter("child2", sample);
 		Counter child11 = createMockCounter("child11", sample);
 
-		Stopwatch stopwatch = createMockStopwatch("stopwatch", new StopwatchSample());
+		Stopwatch stopwatch = createMockStopwatch("stopwatch", new StopwatchSample(common, total, counter, min, max, minTimestamp, maxTimestamp, active, maxActive, maxActiveTimestamp, lastSplit, mean, mean2));
 
 		when(counterHierarchy.getChildren()).thenReturn(Arrays.asList(child1, child2, stopwatch));
 		when(child1.getChildren()).thenReturn(Arrays.asList(child11, stopwatch));
@@ -109,7 +109,7 @@ public class SimonUtilsAggregationTests extends SimonUnitTest {
 
 	@Test
 	public void testAggregateSingleStopwatch() {
-		StopwatchSample sample = new StopwatchSample();
+		StopwatchSample sample = new StopwatchSample(common, total, counter, min, max, minTimestamp, maxTimestamp, active, maxActive, maxActiveTimestamp, lastSplit, mean, mean2);
 		sample.setTotal(1);
 
 		Stopwatch stopwatch = createMockStopwatch("stopwatch", sample);

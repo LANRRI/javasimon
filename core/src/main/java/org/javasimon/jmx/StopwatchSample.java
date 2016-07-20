@@ -51,6 +51,7 @@ public final class StopwatchSample extends org.javasimon.StopwatchSample {
 		long lastUsage, long total, long counter, long min, long max, long minTimestamp,
 		long maxTimestamp, long active, long maxActive, long maxActiveTimestamp, long last)
 	{
+		super(common, total, counter, min, max, minTimestamp, maxTimestamp, active, maxActive, maxActiveTimestamp, lastSplit, mean, mean2);
 		setName(name);
 		setMean(mean);
 		setStandardDeviation(stdDev);
@@ -79,6 +80,7 @@ public final class StopwatchSample extends org.javasimon.StopwatchSample {
 	 * @param sample sample object obtained from Stopwatch Simon
 	 */
 	public StopwatchSample(org.javasimon.StopwatchSample sample) {
+		super(common, total, counter, min, max, minTimestamp, maxTimestamp, active, maxActive, maxActiveTimestamp, lastSplit, mean, mean2);
 		setName(sample.getName());
 		setMean(sample.getMean());
 		setStandardDeviation(sample.getStandardDeviation());
@@ -97,7 +99,7 @@ public final class StopwatchSample extends org.javasimon.StopwatchSample {
 		setActive(sample.getActive());
 		setMaxActive(sample.getMaxActive());
 		setMaxActiveTimestamp(sample.getMaxActiveTimestamp());
-		setLast(sample.getLast());
+		setLast(sample.getLastSplit());
 	}
 
 	/**
@@ -106,7 +108,7 @@ public final class StopwatchSample extends org.javasimon.StopwatchSample {
 	 * @return last measured split in ns as string
 	 */
 	public final String getLastAsString() {
-		return SimonUtils.presentNanoTime(getLast());
+		return SimonUtils.presentNanoTime(getLastSplit());
 	}
 
 	/**

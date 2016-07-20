@@ -83,7 +83,7 @@ public class SimonManagerMXBeanImplTest {
 	}
 
 	private org.javasimon.StopwatchSample stopwatchSample(long counter) {
-		org.javasimon.StopwatchSample sample = new org.javasimon.StopwatchSample();
+		org.javasimon.StopwatchSample sample = new org.javasimon.StopwatchSample(common, total, counter, min, max, minTimestamp, maxTimestamp, active, maxActive, maxActiveTimestamp, lastSplit, mean, mean2);
 		sample.setCounter(counter);
 		return sample;
 	}

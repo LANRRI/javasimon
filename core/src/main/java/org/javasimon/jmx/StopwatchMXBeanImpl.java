@@ -34,7 +34,7 @@ public class StopwatchMXBeanImpl extends AbstractSimonMXBeanImpl implements Stop
 
 	@Override
 	public final long getLast() {
-		return stopwatch.getLast();
+		return stopwatch.getLastSplit();
 	}
 
 	@Override
