@@ -178,7 +178,8 @@ public final class EnabledManager implements Manager {
 	private AbstractSimon instantiateSimon(String name, Class<? extends AbstractSimon> simonClass) {
 		AbstractSimon simon;
 		try {
-			Constructor<? extends AbstractSimon> constructor = simonClass.getDeclaredConstructor(String.class, Manager.class);
+			Constructor<? extends AbstractSimon> constructor =
+				simonClass.getDeclaredConstructor(String.class, Manager.class);
 			simon = constructor.newInstance(name, this);
 		} catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException e) {
 			throw new SimonException(e);
@@ -259,11 +260,7 @@ public final class EnabledManager implements Manager {
 	}
 
 	synchronized void purgeIncrementalSimonsOlderThan(long thresholdMs) {
-		for (Simon simon : allSimons.values()) {
-			if (simon instanceof AbstractSimon) {
-				AbstractSimon abstractSimon = (AbstractSimon) simon;
-				abstractSimon.purgeIncrementalSimonsOlderThan(thresholdMs);
-			}
-		}
+		allSimons.values().forEach(
+			simon -> simon.purgeIncrementalSimonsOlderThan(thresholdMs));
 	}
 }

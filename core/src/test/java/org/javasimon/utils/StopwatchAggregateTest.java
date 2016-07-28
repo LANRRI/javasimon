@@ -1,16 +1,12 @@
 package org.javasimon.utils;
 
 import org.javasimon.SimonUnitTest;
-import org.javasimon.StopwatchSample;
-import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 
 /**
  * @author <a href="mailto:ivan.mushketyk@gmail.com">Ivan Mushketyk</a>
  */
 public class StopwatchAggregateTest extends SimonUnitTest {
-
+/*
 	private StopwatchAggregate aggregate;
 
 	@BeforeMethod
@@ -163,4 +159,5 @@ public class StopwatchAggregateTest extends SimonUnitTest {
 
 		Assert.assertEquals(aggregate, otherAggregate);
 	}
+*/
 }

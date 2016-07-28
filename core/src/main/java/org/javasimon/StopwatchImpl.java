@@ -21,8 +21,8 @@ final class StopwatchImpl extends AbstractSimon implements Stopwatch {
 	 * @param manager owning manager
 	 */
 	StopwatchImpl(String name, Manager manager) {
-		super(manager);
-		new StopwatchSample(name);
+		super(name, manager);
+		sample = new StopwatchSample(name);
 	}
 
 	@Override
@@ -32,20 +32,19 @@ final class StopwatchImpl extends AbstractSimon implements Stopwatch {
 		}
 
 		long splitNs = split.runningFor();
-		long nowNanos = nanoTimeFromSplit(split, splitNs);
+		long nowMillis = manager.millisForNano(split.getStart() + splitNs); //nanoTimeFromSplit(split, splitNs);
 
-		StopwatchSample sample = null;
 		synchronized (this) {
 			// using parameter version saves one currentTimeMillis call
-			updateUsagesNanos(nowNanos);
-			addSplit(splitNs);
-			if (!manager.callback().callbacks().isEmpty()) {
-				sample = sample();
-			}
-			updateIncrementalSimons(splitNs, nowNanos);
+			addSplit(splitNs, nowMillis);
+			updateIncrementalSimons(splitNs, nowMillis);
 		}
 		manager.callback().onStopwatchAdd(this, split, sample);
 		return this;
+	}
+
+	private void addSplit(long splitNs, long now) {
+		sample = sample.addSplit(splitNs, getActive() - 1, now);
 	}
 
 	private long nanoTimeFromSplit(Split split, long splitNs) {
@@ -56,13 +55,12 @@ final class StopwatchImpl extends AbstractSimon implements Stopwatch {
 		}
 	}
 
-	private void updateIncrementalSimons(long splitNs, long nowNanos) {
+	private void updateIncrementalSimons(long splitNs, long now) {
 		Collection<Simon> simons = incrementalSimons();
 		if (simons != null) {
 			for (Simon simon : simons) {
 				StopwatchImpl stopwatch = (StopwatchImpl) simon;
-				stopwatch.addSplit(splitNs);
-				stopwatch.updateUsagesNanos(nowNanos);
+				stopwatch.addSplit(splitNs, now);
 			}
 		}
 	}
@@ -73,10 +71,11 @@ final class StopwatchImpl extends AbstractSimon implements Stopwatch {
 			return Split.disabled(this, manager);
 		}
 
+		long nowNanos = manager.nanoTime();
 		synchronized (this) {
-			sample = sample.activeStart(manager.milliTime());
+			sample = sample.updateActive(getActive() + 1, manager.millisForNano(nowNanos));
 		}
-		Split split = new Split(this, manager, manager.nanoTime());
+		Split split = new Split(this, manager, nowNanos);
 		manager.callback().onStopwatchStart(split);
 		return split;
 	}
@@ -89,17 +88,14 @@ final class StopwatchImpl extends AbstractSimon implements Stopwatch {
 	 * @param subSimon name of the sub-stopwatch (hierarchy delimiter is added automatically), may be {@code null}
 	 */
 	void stop(final Split split, final long nowNanos, final String subSimon) {
-		StopwatchSample sample = null;
 		synchronized (this) {
-			active--;
-			updateUsagesNanos(nowNanos);
+			long now = manager.millisForNano(nowNanos);
 			if (subSimon == null) {
 				long splitNs = nowNanos - split.getStart();
-				addSplit(splitNs);
-				if (!manager.callback().callbacks().isEmpty()) {
-					sample = sample();
-				}
-				updateIncrementalSimons(splitNs, nowNanos);
+				sample = sample.addSplit(splitNs, getActive() - 1, now);
+				updateIncrementalSimons(splitNs, now);
+			} else {
+				sample = sample.updateActive(getActive() - 1, now);
 			}
 		}
 		if (subSimon != null) {
@@ -111,26 +107,6 @@ final class StopwatchImpl extends AbstractSimon implements Stopwatch {
 		manager.callback().onStopwatchStop(split, sample);
 	}
 	// Uses last usage, hence it must be placed after usages update
-
-	private long addSplit(long split) {
-		last = split;
-		total += split;
-		counter++;
-		if (split > max) {
-			max = split;
-			maxTimestamp = getLastUsage();
-		}
-		if (split < min) {
-			min = split;
-			minTimestamp = getLastUsage();
-		}
-		// statistics processing
-		double delta = split - mean;
-		mean = ((double) total) / counter;
-		mean2 += delta * (split - mean);
-
-		return split;
-	}
 
 	@Override
 	public synchronized double getMean() {
@@ -188,12 +164,12 @@ final class StopwatchImpl extends AbstractSimon implements Stopwatch {
 	}
 
 	@Override
-	public synchronized long getActive() {
+	public synchronized int getActive() {
 		return sample.getActive();
 	}
 
 	@Override
-	public synchronized long getMaxActive() {
+	public synchronized int getMaxActive() {
 		return sample.getMaxActive();
 	}
 

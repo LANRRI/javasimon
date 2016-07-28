@@ -248,12 +248,12 @@ final class NullStopwatch extends NullSimon implements Stopwatch {
 	}
 
 	@Override
-	public long getActive() {
+	public int getActive() {
 		return 0;
 	}
 
 	@Override
-	public long getMaxActive() {
+	public int getMaxActive() {
 		return 0;
 	}
 

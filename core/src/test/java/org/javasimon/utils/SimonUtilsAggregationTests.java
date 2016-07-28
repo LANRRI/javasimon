@@ -1,27 +1,12 @@
 package org.javasimon.utils;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import org.javasimon.Counter;
-import org.javasimon.CounterSample;
-import org.javasimon.Simon;
-import org.javasimon.SimonFilter;
 import org.javasimon.SimonUnitTest;
-import org.javasimon.Stopwatch;
-import org.javasimon.StopwatchSample;
-import org.testng.Assert;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
-
-import java.util.Arrays;
-import java.util.Collections;
 
 /**
  * @author <a href="mailto:ivan.mushketyk@gmail.com">Ivan Mushketyk</a>
  */
 public class SimonUtilsAggregationTests extends SimonUnitTest {
-
+/*
 	private Stopwatch stopwatchHeirarchy;
 	private Counter counterHierarchy;
 
@@ -187,4 +172,5 @@ public class SimonUtilsAggregationTests extends SimonUnitTest {
 		CounterAggregate aggregate = SimonUtils.calculateCounterAggregate(counterHierarchy, rejectRoot);
 		Assert.assertEquals(aggregate.getCounter(), 0);
 	}
+	*/
 }

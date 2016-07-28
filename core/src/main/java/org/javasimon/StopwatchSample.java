@@ -26,22 +26,12 @@ public class StopwatchSample implements Sample {
 	private final double mean2;
 
 	StopwatchSample(String name) {
-		common = new SampleCommon(name, null, 0, 0);
-		total = 0;
-		counter = 0;
-		min = Long.MAX_VALUE;
-		minTimestamp = 0;
-		max = 0;
-		maxTimestamp = 0;
-		active = 0;
-		maxActive = 0;
-		maxActiveTimestamp = 0;
-		lastSplit = 0;
-		mean = 0;
-		mean2 = 0;
+		this(new SampleCommon(name, null, 0, 0),
+			0, 0, Long.MAX_VALUE, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 	}
 
-	private StopwatchSample(SampleCommon common, long total, long counter, long min, long minTimestamp,
+	protected StopwatchSample(
+		SampleCommon common, long total, long counter, long min, long minTimestamp,
 		long max, long maxTimestamp, int active, int maxActive, long maxActiveTimestamp,
 		long lastSplit, double mean, double mean2)
 	{
@@ -53,29 +43,27 @@ public class StopwatchSample implements Sample {
 		this.max = max;
 		this.maxTimestamp = maxTimestamp;
 		this.active = active;
-		this.maxActive = maxActive;
-		this.maxActiveTimestamp = maxActiveTimestamp;
+		this.maxActive = active > maxActive ? active : maxActive;
+		this.maxActiveTimestamp = active > maxActive ? getLastUsage() : maxActiveTimestamp;
 		this.lastSplit = lastSplit;
 		this.mean = mean;
 		this.mean2 = mean2;
 	}
 
-	private StopwatchSample addSplit(long split) {
+	StopwatchSample addSplit(long split, int newActive, long now) {
 		double delta = split - mean;
 		double newMean = ((double) total) / counter;
 
-		return new StopwatchSample(common, total + split, counter + 1,
-			split < min ? split : min, split < min ? minTimestamp : common.getLastUsage(),
-			split > max ? split : max, split > max ? maxTimestamp : common.getLastUsage(),
-			active, maxActive, maxActiveTimestamp, split, newMean, delta * (split - newMean));
+		return new StopwatchSample(common.withLastUsage(now), total + split, counter + 1,
+			split < min ? split : min, split < min ? now : minTimestamp,
+			split > max ? split : max, split > max ? now : maxTimestamp,
+			newActive, maxActive, maxActiveTimestamp, split, newMean, delta * (split - newMean));
 	}
 
-	StopwatchSample activeStart(long now) {
-		int newActive = active + 1;
-
-		return new StopwatchSample(common.withLastUsage(now), total, counter, min, minTimestamp,
-			max, maxTimestamp, newActive, newActive > maxActive ? newActive : maxActive,
-			newActive > maxActive ? now : maxActiveTimestamp, lastSplit, mean, mean2);
+	StopwatchSample updateActive(int newActive, long now) {
+		return new StopwatchSample(common.withLastUsage(now), total, counter,
+			min, minTimestamp, max, maxTimestamp, newActive, maxActive, maxActiveTimestamp,
+			lastSplit, mean, mean2);
 	}
 
 	StopwatchSample withNote(String note) {
@@ -159,7 +147,7 @@ public class StopwatchSample implements Sample {
 	 *
 	 * @return current number of active splits
 	 */
-	public final long getActive() {
+	public final int getActive() {
 		return active;
 	}
 
@@ -168,7 +156,7 @@ public class StopwatchSample implements Sample {
 	 *
 	 * @return maximum reached value of active splits
 	 */
-	public final long getMaxActive() {
+	public final int getMaxActive() {
 		return maxActive;
 	}
 

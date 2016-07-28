@@ -8,6 +8,8 @@ package org.javasimon;
  */
 final class UnknownSimon extends AbstractSimon {
 
+	private UnknownSample sample;
+
 	/**
 	 * Constructs unknown Simon with a specified name and for the specified manager.
 	 *
@@ -16,14 +18,12 @@ final class UnknownSimon extends AbstractSimon {
 	 */
 	UnknownSimon(String name, Manager manager) {
 		super(name, manager);
+		sample = new UnknownSample(name, null, manager.milliTime());
 	}
 
 	@Override
 	public synchronized Sample sample() {
-		UnknownSample sample = new UnknownSample();
-		sampleCommon(sample);
 		return sample;
-
 	}
 
 	@Override
@@ -39,6 +39,10 @@ final class UnknownSimon extends AbstractSimon {
 	@Override
 	public boolean stopIncrementalSampling(Object key) {
 		return false;
+	}
+
+	@Override public void setNote(String note) {
+		sample = sample.withNote(note);
 	}
 
 	/**

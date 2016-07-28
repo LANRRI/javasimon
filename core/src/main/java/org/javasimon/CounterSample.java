@@ -9,8 +9,9 @@ import org.javasimon.utils.SimonUtils;
  *
  * @author <a href="mailto:virgo47@gmail.com">Richard "Virgo" Richter</a>
  */
-public class CounterSample extends Sample {
+public class CounterSample implements Sample {
 
+	private final SampleCommon common;
 	private long counter;
 	private long min;
 	private long max;
@@ -20,7 +21,24 @@ public class CounterSample extends Sample {
 	private long decrementSum;
 
 	public CounterSample() {
-		super(name, note, firstUsage, lastUsage);
+		common = new SampleCommon(null, null, 0, 0);
+//		super(name, note, firstUsage, lastUsage);
+	}
+
+	@Override public String getName() {
+		return common.getName();
+	}
+
+	@Override public String getNote() {
+		return common.getNote();
+	}
+
+	@Override public long getFirstUsage() {
+		return common.getFirstUsage();
+	}
+
+	@Override public long getLastUsage() {
+		return common.getLastUsage();
 	}
 
 	/**
@@ -179,7 +197,7 @@ public class CounterSample extends Sample {
 		sb.append(", minTimestamp=").append(SimonUtils.presentTimestamp(minTimestamp));
 		sb.append(", incrementSum=").append(incrementSum);
 		sb.append(", decrementSum=").append(decrementSum);
-		toStringCommon(sb);
+//		toStringCommon(sb);
 		return sb.toString();
 	}
 
@@ -188,6 +206,6 @@ public class CounterSample extends Sample {
 		return "Simon Counter: counter=" + counter +
 			", max=" + SimonUtils.presentMinMaxCount(max) +
 			", min=" + SimonUtils.presentMinMaxCount(min) +
-			simonToStringCommon();
+			common.simonToStringCommon();
 	}
 }

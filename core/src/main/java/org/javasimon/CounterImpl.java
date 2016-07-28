@@ -1,8 +1,8 @@
 package org.javasimon;
 
-import org.javasimon.utils.SimonUtils;
-
 import java.util.Collection;
+
+import org.javasimon.utils.SimonUtils;
 
 /**
  * Class implements {@link org.javasimon.Counter} interface - see there for how to use Counter.
@@ -39,6 +39,7 @@ final class CounterImpl extends AbstractSimon implements Counter {
 	 */
 	CounterImpl(String name, Manager manager) {
 		super(name, manager);
+//		sample = new CounterSample(name, manager.milliTime());
 	}
 
 	@Override
@@ -59,7 +60,7 @@ final class CounterImpl extends AbstractSimon implements Counter {
 	}
 
 	private void setPrivate(long val, long now) {
-		updateUsages(now);
+//		updateUsages(now);
 		counter = val;
 		updateMax();
 		updateMin();
@@ -111,7 +112,7 @@ final class CounterImpl extends AbstractSimon implements Counter {
 	}
 
 	private void increasePrivate(long inc, long now) {
-		updateUsages(now);
+//		updateUsages(now);
 		incrementSum += inc;
 		counter += inc;
 		if (inc > 0) {
@@ -153,7 +154,7 @@ final class CounterImpl extends AbstractSimon implements Counter {
 	}
 
 	private void decreasePrivate(long dec, long now) {
-		updateUsages(now);
+//		updateUsages(now);
 		decrementSum += dec;
 		counter -= dec;
 		if (dec > 0) {
@@ -224,7 +225,7 @@ final class CounterImpl extends AbstractSimon implements Counter {
 		sample.setMaxTimestamp(maxTimestamp);
 		sample.setIncrementSum(incrementSum);
 		sample.setDecrementSum(decrementSum);
-		sampleCommon(sample);
+//		sampleCommon(sample);
 		return sample;
 	}
 
@@ -236,6 +237,10 @@ final class CounterImpl extends AbstractSimon implements Counter {
 	@Override
 	public CounterSample sampleIncrementNoReset(Object key) {
 		return (CounterSample) sampleIncrementNoResetHelper(key);
+	}
+
+	@Override public void setNote(String note) {
+//		sample = sample.withNote(note);
 	}
 
 	/**

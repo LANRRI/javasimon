@@ -109,14 +109,14 @@ public interface Stopwatch extends Simon {
 	 *
 	 * @return current number of active splits
 	 */
-	long getActive();
+	int getActive();
 
 	/**
 	 * Returns peek value of active concurrent splits.
 	 *
 	 * @return maximum reached value of active splits
 	 */
-	long getMaxActive();
+	int getMaxActive();
 
 	/**
 	 * Returns ms timestamp when the last peek of the active split count occurred.

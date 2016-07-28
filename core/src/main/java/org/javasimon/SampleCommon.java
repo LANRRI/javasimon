@@ -3,22 +3,18 @@ package org.javasimon;
 import org.javasimon.utils.SimonUtils;
 
 /** Sample implementation covering common fiels from {@link AbstractSimon}. */
-class SampleCommon implements Sample {
+public class SampleCommon implements Sample {
 
 	private final String name;
 	private final String note;
 	private final long firstUsage;
 	private final long lastUsage;
 
-	SampleCommon(String name, String note, long firstUsage, long lastUsage) {
+	public SampleCommon(String name, String note, long firstUsage, long lastUsage) {
 		this.name = name;
 		this.note = note;
 		this.firstUsage = firstUsage;
 		this.lastUsage = lastUsage;
-	}
-
-	public SampleCommon(String name, String note, long firstUsage) {
-		this(name, note, firstUsage, firstUsage);
 	}
 
 	/** Creates new sample with updated note. */

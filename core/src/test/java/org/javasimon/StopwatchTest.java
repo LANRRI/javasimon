@@ -14,9 +14,9 @@ public final class StopwatchTest extends SimonUnitTest {
 	@Test
 	public void basicStopwatchTest() {
 		Stopwatch stopwatch = SimonManager.getStopwatch(null);
-		long split = stopwatch.start().stop().runningFor();
+		long splitNs = stopwatch.start().stop().runningFor();
 		Assert.assertTrue(stopwatch.getTotal() >= 0);
-		Assert.assertEquals(stopwatch.getTotal(), split);
+		Assert.assertEquals(stopwatch.getTotal(), splitNs);
 		Assert.assertEquals(stopwatch.getCounter(), 1);
 		Assert.assertEquals(stopwatch.getMax(), stopwatch.getTotal());
 		Assert.assertEquals(stopwatch.getMin(), stopwatch.getTotal());

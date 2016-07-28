@@ -32,9 +32,8 @@ abstract class AbstractSimon implements Simon {
 	private Map<Object, Simon> incrementalSimons;
 
 	/** Constructor of the abstract Simon is used internally by subclasses. */
-	AbstractSimon(Manager manager) {
+	AbstractSimon(String name, Manager manager) {
 		this.manager = manager;
-		String name = sample().getName();
 		if (name == null || name.equals(Manager.ROOT_SIMON_NAME)) {
 			state = SimonState.ENABLED;
 			enabled = true;

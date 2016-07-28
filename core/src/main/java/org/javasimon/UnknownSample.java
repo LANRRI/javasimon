@@ -6,10 +6,14 @@ package org.javasimon;
  * @author gquintana
  * @since 3.2
  */
-public class UnknownSample extends Sample {
+public class UnknownSample extends SampleCommon implements Sample {
 
-	public UnknownSample() {
-		super(name, note, firstUsage, lastUsage);
+	UnknownSample(String name, String note, long now) {
+		super(name, note, now, now);
+	}
+
+	@Override UnknownSample withNote(String note) {
+		return new UnknownSample(getName(), note, getLastUsage());
 	}
 
 	/**
@@ -20,10 +24,5 @@ public class UnknownSample extends Sample {
 	@Override
 	public String toString() {
 		return "UnknownSample" + "{name=" + getName() + ", note=" + getNote() + '}';
-	}
-
-	@Override
-	public String simonToString() {
-		return null;
 	}
 }
